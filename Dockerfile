@@ -1,6 +1,5 @@
 #-------------------------------------------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See https://go.microsoft.com/fwlink/?linkid=2090316 for license information.
+# Licensed under the MIT License.
 #-------------------------------------------------------------------------------------------------------------
 
 # You can use any Debian/Ubuntu based image as a base
@@ -17,22 +16,23 @@ ENV DEBIAN_FRONTEND=noninteractive
 ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
-#ARG PROXY=''
+ARG HTTP_PROXY=''
 
 # Proxy設定
-#ENV http_proxy $PROXY
-#ENV https_proxy $PROXY
-ENV http_proxy ''
-ENV https_proxy ''
+ENV http_proxy $HTTP_PROXY
+ENV https_proxy $HTTP_PROXY
 ENV no_proxy '127.0.0.1,localhost,192.168.99.100,192.168.99.101,192.168.99.102,192.168.99.103,192.168.99.104,192.168.99.105,172.17.0.1'
 
 # 自己証明が必要な場合はここで組み込む
 ADD /etc/ssl/certs/      /etc/ssl/certs/
 
-RUN echo ca_directory = /etc/ssl/certs/ > ~/.wgetrc 
-
 # Configure apt and install packages
 RUN set -x \
+    && echo '\n\
+        ca_directory = /etc/ssl/certs/ \n\
+        http_proxy=$HTTP_PROXY \n\
+        https_proxy=$HTTP_PROXY \n\
+    ' > /etc/wgetrc \
     && apt-get update \
     && apt-get -y install --no-install-recommends apt-utils dialog 2>&1 \
     && apt-get -y install openssh-server \
@@ -87,7 +87,7 @@ RUN set -x \
     && apt-get install dirmngr gnupg \
 # echo $([ -n "$http_proxy" ] && echo "--keyserver-option http-proxy=$http_proxy")
 #    && apt-key adv -no-tty --keyserver keyserver.ubuntu.com $([ -n "$http_proxy" ] && echo "--keyserver-option http-proxy=$http_proxy") --recv-keys A66C5D02 \
-    && apt-key adv --keyserver keyserver.ubuntu.com $([ -n "$http_proxy" ] && echo "--keyserver-option http-proxy=$http_proxy") --recv-keys A66C5D02 \
+    && apt-key adv --keyserver keyserver.ubuntu.com $([ -n "$HTTP_PROXY" ] && echo "--keyserver-option http-proxy=$HTTP_PROXY") --recv-keys A66C5D02 \
     && echo 'deb https://rpardini.github.io/adoptopenjdk-deb-installer stable main' > /etc/apt/sources.list.d/rpardini-aoj.list \
 #RUN apt-get -y install openjdk-8-jdk-headless maven
     && apt-get update \
