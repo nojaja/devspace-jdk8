@@ -34,7 +34,7 @@ RUN set -x \
 #    && echo '\n\
 #        ca_directory = /etc/ssl/certs/ \n\
 #    ' >> /etc/wgetrc \
-    && cat /etc/wgetrc \
+#    && cat /etc/wgetrc \
     && apt-get update \
     && apt-get -y install --no-install-recommends apt-utils dialog 2>&1 \
     && apt-get -y install openssh-server \
