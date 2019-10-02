@@ -33,10 +33,11 @@ RUN set -x \
         http_proxy=$HTTP_PROXY \n\
         https_proxy=$HTTP_PROXY \n\
     ' > /etc/wgetrc \
+    && cat /etc/wgetrc \
     && apt-get update \
     && apt-get -y install --no-install-recommends apt-utils dialog 2>&1 \
     && apt-get -y install openssh-server \
-    && apt-get -y install net-tools \
+    && apt-get -y install net-tools zip unzip \
     #
     # Verify git, process tools installed
     && apt-get -y install git iproute2 procps \
