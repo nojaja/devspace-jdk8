@@ -26,10 +26,13 @@ ADD /etc/ssl/certs/      /etc/ssl/certs/
 
 # Configure apt and install packages
 RUN set -x \
+#    && echo '\n\
+#        ca_directory = /etc/ssl/certs/ \n\
+#        http_proxy=${PROXY:-} \n\
+#        https_proxy=${PROXY:-} \n\
+#    ' > /etc/wgetrc \
     && echo '\n\
         ca_directory = /etc/ssl/certs/ \n\
-        http_proxy=${PROXY:-} \n\
-        https_proxy=${PROXY:-} \n\
     ' > /etc/wgetrc \
     && cat /etc/wgetrc \
     && apt-get update \
