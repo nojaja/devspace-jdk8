@@ -33,7 +33,7 @@ RUN set -x \
 #    ' > /etc/wgetrc \
     && echo '\n\
         ca_directory = /etc/ssl/certs/ \n\
-    ' > /etc/wgetrc \
+    ' >> /etc/wgetrc \
     && cat /etc/wgetrc \
     && apt-get update \
     && apt-get -y install --no-install-recommends apt-utils dialog 2>&1 \
