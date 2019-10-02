@@ -31,9 +31,9 @@ RUN set -x \
 #        http_proxy=${PROXY:-} \n\
 #        https_proxy=${PROXY:-} \n\
 #    ' > /etc/wgetrc \
-    && echo '\n\
-        ca_directory = /etc/ssl/certs/ \n\
-    ' >> /etc/wgetrc \
+#    && echo '\n\
+#        ca_directory = /etc/ssl/certs/ \n\
+#    ' >> /etc/wgetrc \
     && cat /etc/wgetrc \
     && apt-get update \
     && apt-get -y install --no-install-recommends apt-utils dialog 2>&1 \
