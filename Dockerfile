@@ -27,8 +27,8 @@ ADD /etc/ssl/certs/      /etc/ssl/certs/
 # Configure apt and install packages
 RUN set -x \
     && echo "ca_directory = /etc/ssl/certs/" > /etc/wgetrc \
-    && $([ -n "$PROXY" ] && echo "http_proxy = $PROXY" >> /etc/wgetrc) \
-    && $([ -n "$PROXY" ] && echo "https_proxy = $PROXY" >> /etc/wgetrc) \
+    && if[ -n "$PROXY" ] then echo "http_proxy = $PROXY" >> /etc/wgetrc) fi\
+    && if[ -n "$PROXY" ] then echo "https_proxy = $PROXY" >> /etc/wgetrc) fi\
     && apt-get update \
     && apt-get -y install --no-install-recommends apt-utils dialog 2>&1 \
     && apt-get -y install openssh-server \
