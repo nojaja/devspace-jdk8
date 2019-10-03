@@ -1,6 +1,5 @@
 #-------------------------------------------------------------------------------------------------------------
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License. See https://go.microsoft.com/fwlink/?linkid=2090316 for license information.
+# Licensed under the MIT License.
 #-------------------------------------------------------------------------------------------------------------
 
 # You can use any Debian/Ubuntu based image as a base
@@ -17,26 +16,25 @@ ENV DEBIAN_FRONTEND=noninteractive
 ARG USERNAME=vscode
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
-#ARG PROXY=''
 
 # Proxy設定
-#ENV http_proxy $PROXY
-#ENV https_proxy $PROXY
-ENV http_proxy ''
-ENV https_proxy ''
-ENV no_proxy '127.0.0.1,localhost,192.168.99.100,192.168.99.101,192.168.99.102,192.168.99.103,192.168.99.104,192.168.99.105,172.17.0.1'
+ARG PROXY=''
+ARG no_proxy='127.0.0.1,localhost,192.168.99.100,192.168.99.101,192.168.99.102,192.168.99.103,192.168.99.104,192.168.99.105,172.17.0.1'
 
 # 自己証明が必要な場合はここで組み込む
 ADD /etc/ssl/certs/      /etc/ssl/certs/
 
-RUN echo ca_directory = /etc/ssl/certs/ > ~/.wgetrc 
-
 # Configure apt and install packages
 RUN set -x \
+    && echo "\n\
+        ca_directory = /etc/ssl/certs/ \n\
+        http_proxy=$PROXY\n\
+        https_proxy=$PROXY\n\
+    " > /etc/wgetrc \
     && apt-get update \
     && apt-get -y install --no-install-recommends apt-utils dialog 2>&1 \
     && apt-get -y install openssh-server \
-    && apt-get -y install net-tools \
+    && apt-get -y install net-tools zip unzip \
     #
     # Verify git, process tools installed
     && apt-get -y install git iproute2 procps \
@@ -85,17 +83,13 @@ RUN set -x \
     #
 # java 
     && apt-get install dirmngr gnupg \
-# echo $([ -n "$http_proxy" ] && echo "--keyserver-option http-proxy=$http_proxy")
-#    && apt-key adv -no-tty --keyserver keyserver.ubuntu.com $([ -n "$http_proxy" ] && echo "--keyserver-option http-proxy=$http_proxy") --recv-keys A66C5D02 \
-    && apt-key adv --keyserver keyserver.ubuntu.com $([ -n "$http_proxy" ] && echo "--keyserver-option http-proxy=$http_proxy") --recv-keys A66C5D02 \
+    && apt-key adv --keyserver keyserver.ubuntu.com $([ -n "$PROXY" ] && echo "--keyserver-option http-proxy=$PROXY") --recv-keys A66C5D02 \
     && echo 'deb https://rpardini.github.io/adoptopenjdk-deb-installer stable main' > /etc/apt/sources.list.d/rpardini-aoj.list \
 #RUN apt-get -y install openjdk-8-jdk-headless maven
     && apt-get update \
     && apt-get install -y adoptopenjdk-8-installer maven \
     #
 # nodejs
-#    && curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash - \
-#    && apt-get install -y nodejs npm\
     && curl -sL https://deb.nodesource.com/setup_11.x | bash - \
     && apt-get install -y nodejs \
     && npm install n -g \
